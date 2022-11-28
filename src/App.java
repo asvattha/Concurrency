@@ -22,6 +22,7 @@ public class App implements Runnable{
         Thread t = new Thread(new App());
         t.setName("Thread 1");
         t.start();
+        t.join(5000);
 
         System.out.printf("%s is finished%n", Thread.currentThread().getName());
     }
