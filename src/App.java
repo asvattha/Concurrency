@@ -1,39 +1,27 @@
-public class App implements Runnable{
+public class App{
 
-    static boolean isInterrupted = false;
-    static Object myLock = new Object();
-
-    @Override
-    public void run() {
-        foo();
-    }
-
-    public static void foo() {
-        for (int i = 0; i < 10; i++){
-            try{
-                if (isInterrupted){
-                    System.out.println("Thread stopped");
-                    return;
-                }
-                Thread.sleep(1000);
-            } catch(InterruptedException e) {
-                System.out.println("I am not finished yet!!");
-                return;
-            }
-            
-            System.out.printf("%s %s%n", "*", Thread.currentThread().getName());
-        }
-    }
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws InterruptedException {
         
-        Thread t = new Thread(new App());
-        t.setName("Thread 1");
-        t.start();
-        t.join(5000);
-        //t.interrupt(); // interrupting it forcefully
-        isInterrupted = true;
+        Counter counter = new Counter();
+        Thread t1 = new Thread(new Runnable() {
+            public void run() {
+                counter.increment();
+            }
+        });
 
-        System.out.printf("%s is finished%n", Thread.currentThread().getName());
+        Thread t2 = new Thread(new Runnable() {
+            public void run(){
+                counter.decrement();
+            }
+        });
+
+        t1.start();
+        t2.start();
+
+        t1.join();
+        t2.join();
+
+        System.out.printf("The result is %d", counter.value());
     }
 
 
